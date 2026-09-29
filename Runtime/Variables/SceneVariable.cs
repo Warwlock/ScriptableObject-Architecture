@@ -15,7 +15,7 @@ namespace ScriptableObjectArchitecture
         fileName = "SceneVariable.asset",
         menuName = SOArchitecture_Utility.ADVANCED_VARIABLE_SUBMENU + "Scene",
         order = 120)]
-    public sealed class SceneVariable : BaseVariable<SceneInfo, SceneInfoEvent>
+    public class SceneVariable : BaseVariable<SceneInfo, SceneInfoEvent>
     {
         /// <summary>
         /// Returns the <see cref="SceneInfo"/> of this instance.

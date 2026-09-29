@@ -10,7 +10,7 @@ namespace ScriptableObjectArchitecture
         fileName = "StringVariable.asset",
         menuName = SOArchitecture_Utility.VARIABLE_SUBMENU + "string",
         order = SOArchitecture_Utility.ASSET_MENU_ORDER_COLLECTIONS + 2)]
-    public sealed class StringVariable : BaseVariable<string, StringEvent>
+    public class StringVariable : BaseVariable<string, StringEvent>
     {
     } 
 }
