@@ -3,17 +3,7 @@ using UnityEngine.Events;
 
 namespace ScriptableObjectArchitecture
 {
-    public abstract class BaseVariable : GameEventBase
-    {
-        public abstract bool IsClamped { get; }
-        public abstract bool Clampable { get; }
-        public abstract bool ReadOnly { get; }
-        public abstract System.Type Type { get; }
-        public abstract System.Type ReferenceType { get; }
-        public abstract object BaseValue { get; set; }
-        public abstract bool UseDefaultValue { get; }
-    }
-    public abstract class BaseVariable<T> : BaseVariable
+    public abstract class BaseVariable<T> : GameEventBase
     {
         public virtual T Value
         {
@@ -63,14 +53,14 @@ namespace ScriptableObjectArchitecture
             }
         }
 
-        public override bool Clampable { get { return false; } }
-        public override bool ReadOnly { get { return _readOnly; } }
-        public override bool IsClamped { get { return _isClamped; } }
-        public override System.Type Type { get { return typeof(T); } }
-        public override System.Type ReferenceType => typeof(BaseReference<T, BaseVariable<T>>);
-        public override bool UseDefaultValue => _useDefaultValue;
+        public virtual bool Clampable { get { return false; } }
+        public virtual bool ReadOnly { get { return _readOnly; } }
+        public virtual bool IsClamped { get { return _isClamped; } }
+        public virtual System.Type Type { get { return typeof(T); } }
+        public virtual System.Type ReferenceType => typeof(BaseReference<T, BaseVariable<T>>);
+        public virtual bool UseDefaultValue => _useDefaultValue;
 
-        public override object BaseValue
+        public object BaseValue
         {
             get
             {

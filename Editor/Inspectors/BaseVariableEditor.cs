@@ -7,10 +7,9 @@ namespace ScriptableObjectArchitecture.Editor
     [CustomEditor(typeof(BaseVariable<>), true)]
     public class BaseVariableEditor : UnityEditor.Editor
     {
-        private BaseVariable Target { get { return (BaseVariable)target; } }
+        private dynamic Target { get { return target; } }
         protected bool IsClampable { get { return Target.Clampable; } }
-        protected bool IsClamped { get { return Target.IsClamped; } }
-
+        
         private SerializedProperty _valueProperty;
         private SerializedProperty _readOnly;
         private SerializedProperty _raiseWarning;
@@ -23,7 +22,7 @@ namespace ScriptableObjectArchitecture.Editor
         private AnimBool _useDefaultValueAnimation;
         private AnimBool _raiseWarningAnimation;
         private AnimBool _isClampedVariableAnimation;
-        
+
         private const string READONLY_TOOLTIP = "Should this value be changable during runtime? Will still be editable in the inspector regardless";
 
         protected virtual void OnEnable()
@@ -59,7 +58,7 @@ namespace ScriptableObjectArchitecture.Editor
         }
         protected virtual void DrawValue()
         {
-            GenericPropertyDrawer.DrawPropertyDrawerLayout(_valueProperty, Target.Type);
+            EditorGUILayout.PropertyField(_valueProperty);
 
             EditorGUILayout.PropertyField(_useDefaultProperty);
             _useDefaultValueAnimation.target = _useDefaultProperty.boolValue;
@@ -69,7 +68,7 @@ namespace ScriptableObjectArchitecture.Editor
                 {
                     using (new EditorGUI.IndentLevelScope())
                     {
-                        GenericPropertyDrawer.DrawPropertyDrawerLayout(_defaultValueProperty, Target.ReferenceType);
+                        EditorGUILayout.PropertyField(_defaultValueProperty);
                     }
                 }
             }
@@ -84,16 +83,16 @@ namespace ScriptableObjectArchitecture.Editor
 
             using (var anim = new EditorGUILayout.FadeGroupScope(_isClampedVariableAnimation.faded))
             {
-                if(anim.visible)
+                if (anim.visible)
                 {
                     using (new EditorGUI.IndentLevelScope())
                     {
                         EditorGUILayout.PropertyField(_minValueProperty);
                         EditorGUILayout.PropertyField(_maxValueProperty);
                     }
-                }                
+                }
             }
-            
+
         }
         protected void DrawReadonlyField()
         {

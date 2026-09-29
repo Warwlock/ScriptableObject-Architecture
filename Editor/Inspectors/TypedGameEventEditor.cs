@@ -22,8 +22,9 @@ namespace ScriptableObjectArchitecture.Editor
 
             using (var scope = new EditorGUI.ChangeCheckScope())
             {
-                Type debugValueType = GetDebugValueType(property);
-                GenericPropertyDrawer.DrawPropertyDrawerLayout(property, debugValueType);
+                //Type debugValueType = GetDebugValueType(property);
+                EditorGUILayout.PropertyField(property);
+                //GenericPropertyDrawer.DrawPropertyDrawerLayout(property, debugValueType);
 
                 if (scope.changed)
                 {

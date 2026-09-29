@@ -3,7 +3,7 @@
 namespace ScriptableObjectArchitecture
 {
     [System.Serializable]
-    public class BaseReference<TBase, TVariable> : BaseReference where TVariable : BaseVariable<TBase>
+    public class BaseReference<TBase, TVariable> where TVariable : BaseVariable<TBase>
     {
         public BaseReference() { }
         public BaseReference(TBase baseValue)
@@ -56,7 +56,7 @@ namespace ScriptableObjectArchitecture
             }
         }
 
-        public BaseReference CreateCopy()
+        public BaseReference<TBase, TVariable> CreateCopy()
         {
             BaseReference<TBase, TVariable> copy = (BaseReference<TBase, TVariable>)System.Activator.CreateInstance(GetType());
             copy._useConstant = _useConstant;
@@ -90,7 +90,4 @@ namespace ScriptableObjectArchitecture
             return Value.ToString();
         }
     }
-
-    //Can't get property drawer to work with generic arguments
-    public abstract class BaseReference { } 
 }
