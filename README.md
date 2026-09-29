@@ -17,6 +17,10 @@
 - Runtime Sets
 - Custom Icons
 
+# Known Problems / Limitations
+
+- There is Custom Vector4 Property Drawer. It can affect all of the scripts in the project. But it makes the field nice and more useful.
+
 # Installation
 
 There is only .git and manual installation ways:
@@ -41,3 +45,8 @@ Custom icons
 Easy and automatic script generation
 
 ![](https://i.imgur.com/xm2gNmo.png)
+
+
+# ToDo
+
+- [ ] VFX Bindings
