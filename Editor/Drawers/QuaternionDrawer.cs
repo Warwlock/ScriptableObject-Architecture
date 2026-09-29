@@ -5,7 +5,7 @@ using UnityEditor;
 
 namespace ScriptableObjectArchitecture.Editor
 {
-    [CustomPropertyDrawer(typeof(Quaternion))]
+    /*[CustomPropertyDrawer(typeof(Quaternion))]
     public class QuaternionDrawer : PropertyDrawer
     {
         private const float Height = 20;
@@ -22,5 +22,5 @@ namespace ScriptableObjectArchitecture.Editor
         {
             return Height;
         }
-    }
+    }*/
 }

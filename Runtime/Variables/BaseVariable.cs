@@ -83,19 +83,19 @@ namespace ScriptableObjectArchitecture
         }
 
         [SerializeField]
-        protected T _value = default(T);
+        protected T _value = default;
         [SerializeField]
         private bool _readOnly = false;
         [SerializeField]
         private bool _useDefaultValue = false;
-        [SerializeField]
+        [SerializeField, Tooltip("If any script tries to change readonly variable, show a warning message in console.")]
         private bool _raiseWarning = true;
         [SerializeField]
         protected bool _isClamped = false;
         [SerializeField]
-        protected T _minClampedValue = default(T);
+        protected T _minClampedValue = default;
         [SerializeField]
-        protected T _maxClampedValue = default(T);
+        protected T _maxClampedValue = default;
         [SerializeField]
         protected T _defaultValue;
         
