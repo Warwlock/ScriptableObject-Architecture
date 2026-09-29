@@ -1,12 +1,12 @@
 # ScriptableObject-Architecture
 
-This is a forked version of [DanielEverland/ScriptableObject-Architecture](https://github.com/DanielEverland/ScriptableObject-Architecture) project. It was an archived project and I need some new features to support my game projects.
+**Note:** This is a forked version of [DanielEverland/ScriptableObject-Architecture](https://github.com/DanielEverland/ScriptableObject-Architecture) project. It was an archived project and I need some new features to support my game projects.
 
-Makes using Scriptable Objects as a fundamental part of your architecture in Unity super easy
+* Makes using Scriptable Objects as a fundamental part of your architecture in Unity super easy.
 
-Based on Ryan Hipple's 2017 Unite talk https://www.youtube.com/watch?v=raQ3iHhE_Kk
+* Based on Ryan Hipple's 2017 Unite talk https://www.youtube.com/watch?v=raQ3iHhE_Kk
 
-Reading the [Wiki Page](https://github.com/DanielEverland/ScriptableObject-Architecture/wiki) is recommended!
+* Reading the [Wiki Page](https://github.com/DanielEverland/ScriptableObject-Architecture/wiki) is recommended!
 
 # Features
 - Automatic Script Generation
@@ -23,6 +23,8 @@ There is only .git and manual installation ways:
 
 * Open package manager and Install Package from Git URL: `https://github.com/Warwlock/ScriptableObject-Architecture.git`
 * Manually download this repo and add it to your `Assets` or `Packages` folder.
+
+# Showcase
 
 Visual debugging of events
 
