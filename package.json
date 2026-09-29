@@ -1,0 +1,26 @@
+{
+  "name": "com.warwlock.scriptableobjectarchitecture",
+  "displayName": "ScriptableObject-Architecture",
+  "version": "1.7.0",
+  "unity": "6000.3",
+  "description": "Makes using Scriptable Objects as a fundamental part of your architecture in Unity super easy.",
+  "documentationUrl": "",
+  "license": "MIT",
+  "licensesUrl": "https://github.com/Warwlock/ScriptableObject-Architecture/blob/main/LICENSE.md",
+  "changelogUrl": "https://github.com/Warwlock/ScriptableObject-Architecture/blob/main/CHANGELOG.md",
+  "author": "Warwlock",
+  "keywords": [
+    "Scriptable Object",
+    "Scripting"
+  ],
+  "bugs": {
+    "url": "https://github.com/Warwlock/ScriptableObject-Architecture/issues"
+  },
+  "samples": [
+    {
+      "displayName": "Example-References-Events-Collections",
+      "description": "Three demo scene showcasing how scriptable object architecture used in different scenarious.",
+      "path": "Samples~/Example-References-Events-Collections"
+    }
+  ]
+}

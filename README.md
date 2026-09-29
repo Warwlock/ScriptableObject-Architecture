@@ -1,13 +1,12 @@
 # ScriptableObject-Architecture
-[![openupm](https://img.shields.io/npm/v/com.danieleverland.scriptableobjectarchitecture?label=openupm&registry_uri=https://package.openupm.com)](https://openupm.com/packages/com.danieleverland.scriptableobjectarchitecture/)
+
+This is a forked version of [DanielEverland/ScriptableObject-Architecture](https://github.com/DanielEverland/ScriptableObject-Architecture) project. It was an archived project and I need some new features to support my game projects.
 
 Makes using Scriptable Objects as a fundamental part of your architecture in Unity super easy
 
 Based on Ryan Hipple's 2017 Unite talk https://www.youtube.com/watch?v=raQ3iHhE_Kk
 
-Now on the [Asset Store!](https://assetstore.unity.com/packages/tools/utilities/scriptableobject-architecture-131520)
-
-Reading the [Quick Start Page](https://github.com/DanielEverland/ScriptableObject-Architecture/wiki/Quick-Start) is recommended!
+Reading the [Wiki Page](https://github.com/DanielEverland/ScriptableObject-Architecture/wiki) is recommended!
 
 # Features
 - Automatic Script Generation
@@ -17,6 +16,13 @@ Reading the [Quick Start Page](https://github.com/DanielEverland/ScriptableObjec
 - Typed Events
 - Runtime Sets
 - Custom Icons
+
+# Installation
+
+There is only .git and manual installation ways:
+
+* Open package manager and Install Package from Git URL: `https://github.com/Warwlock/ScriptableObject-Architecture.git`
+* Manually download this repo and add it to your `Assets` or `Packages` folder.
 
 Visual debugging of events
 
@@ -33,26 +39,3 @@ Custom icons
 Easy and automatic script generation
 
 ![](https://i.imgur.com/xm2gNmo.png)
-
-# Installation
-For a more detailed explanation, please read the [Quick Start Page](https://github.com/DanielEverland/ScriptableObject-Architecture/wiki/Quick-Start)
-
-There are three ways you can install this package
-- [Unity Asset Store](https://assetstore.unity.com/packages/tools/utilities/scriptableobject-architecture-131520)
-- .unitypackage from [Releases](https://github.com/DanielEverland/ScriptableObject-Architecture/releases)
-- Unity package manager introduced in 2017.2
-- [OpenUPM](https://openupm.com/packages/com.danieleverland.scriptableobjectarchitecture/)
-
-## Package Manager Installation
-
-Simply modify your `manifest.json` file found at `/PROJECTNAME/Packages/manifest.json` by including the following line
-
-```
-{
-	"dependencies": {
-		...
-		"com.danieleverland.scriptableobjectarchitecture": "https://github.com/DanielEverland/ScriptableObject-Architecture.git#release/stable",
-		...
-	}
-}
-```
