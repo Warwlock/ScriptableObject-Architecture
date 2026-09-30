@@ -57,8 +57,8 @@ namespace ScriptableObjectArchitecture
         protected readonly List<IGameEventListener> _listeners = new List<IGameEventListener>();
         protected readonly List<System.Action> _actions = new List<System.Action>();
 
-        public List<StackTraceEntry> StackTraces { get { return _stackTraces; } }
-        private List<StackTraceEntry> _stackTraces = new List<StackTraceEntry>();
+        public StackTraceList StackTraces { get { return _stackTraces; } }
+        private StackTraceList _stackTraces = new StackTraceList();
 
         public void AddStackTrace()
         {

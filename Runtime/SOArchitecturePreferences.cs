@@ -28,6 +28,14 @@ namespace ScriptableObjectArchitecture
             get { return GetBoolPref(DRAW_EVENT_GIZMOS_PREF, DRAW_EVENT_GIZMOS_DEFAULT); }
         }
 
+        /// <summary>
+        /// Should stack trace logs cleared when entering play mode.
+        /// </summary>
+        public static bool IsClearStackTracesOnPlayMode
+        {
+            get { return GetBoolPref(CLEAR_STACK_TRACE_PREF, CLEAR_STACK_TRACE_DEFAULT); }
+        }
+
         // UI
         private const string PREFERENCES_TITLE_PATH = "Preferences/SOArchitecture";
         private const string PROJECT_TITLE_PATH = "Project/SOArchitecture";
@@ -49,28 +57,27 @@ namespace ScriptableObjectArchitecture
 
         private static readonly GUILayoutOption MAX_WIDTH;
 
-#if UNITY_2018_3_OR_NEWER
         // Searchable Fields
         private static readonly string[] KEYWORDS =
         {
             "Scriptable",
             "Architecture"
         };
-#endif
 
         // User Editor Preferences
         private const string DRAW_EVENT_GIZMOS_PREF = "SOArchitecture.DrawEventGizmoos";
         private const string ENABLE_DEBUG_PREF = "SOArchitecture.EnableDebug";
+        private const string CLEAR_STACK_TRACE_PREF = "SOArchitecture.ClearStackTracePlayMode";
 
         private const bool DRAW_EVENT_GIZMOS_DEFAULT = true;
         private const bool ENABLE_DEBUG_DEFAULT = true;
+        private const bool CLEAR_STACK_TRACE_DEFAULT = true;
 
         static SOArchitecturePreferences()
         {
             MAX_WIDTH = GUILayout.MaxWidth(200f);
         }
 
-#if UNITY_2018_3_OR_NEWER
         [SettingsProvider]
         private static SettingsProvider CreateProjectPreferenceSettingsProvider()
         {
@@ -89,12 +96,6 @@ namespace ScriptableObjectArchitecture
                 guiHandler = DrawPersonalPrefsGUI,
                 keywords = KEYWORDS
             };
-        }
-#endif
-        private static void DrawAllGUI()
-        {
-            DrawProjectGUI();
-            DrawPersonalPrefsGUI();
         }
 
         private static void DrawProjectGUI(string value = "")
@@ -163,6 +164,16 @@ namespace ScriptableObjectArchitecture
             if (GUI.changed)
             {
                 EditorPrefs.SetBool(ENABLE_DEBUG_PREF, enableDebugPref);
+            }
+
+            // Clear Stack Trace when Entering Play Mode
+            var clearStackTracePref = GetBoolPref(CLEAR_STACK_TRACE_PREF, CLEAR_STACK_TRACE_DEFAULT);
+
+            GUI.changed = false;
+            clearStackTracePref = EditorGUILayout.Toggle("Clear Stack Trace Logs When Entering Play Mode", clearStackTracePref);
+            if (GUI.changed)
+            {
+                EditorPrefs.SetBool(CLEAR_STACK_TRACE_PREF, clearStackTracePref);
             }
         }
 

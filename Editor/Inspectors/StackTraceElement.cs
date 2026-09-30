@@ -72,17 +72,6 @@ namespace ScriptableObjectArchitecture.Editor
                 _detailLabel.text = selected != null ? selected.ToString() : string.Empty;
             };
             
-            // Auto-Refresh
-            int lastCount = _target.StackTraces?.Count ?? 0;
-            _listView.schedule.Execute(() =>
-            {
-                if (_target.StackTraces != null && _target.StackTraces.Count != lastCount)
-                {
-                    lastCount = _target.StackTraces.Count;
-                    Refresh();
-                }
-            }).Every(500);
-            
             // Native alternating background colors
             _listView.showAlternatingRowBackgrounds = AlternatingRowBackground.All;
             _listView.selectionType = SelectionType.Single;
@@ -101,6 +90,33 @@ namespace ScriptableObjectArchitecture.Editor
 
             _contentContainer.Add(splitView);
             Add(_contentContainer);
+
+            RegisterCallback<AttachToPanelEvent>(OnAttachToPanel);
+            RegisterCallback<DetachFromPanelEvent>(OnDetachFromPanel);
+        }
+
+        private void OnAttachToPanel(AttachToPanelEvent evt)
+        {
+            Debug.Log("Sub");
+            if (_target?.StackTraces is StackTraceList stackList)
+            {
+                stackList.OnListChanged += OnListChanged;
+            }
+        }
+
+        private void OnDetachFromPanel(DetachFromPanelEvent evt)
+        {
+            Debug.Log("UnSub");
+            if (_target?.StackTraces is StackTraceList stackList)
+            {
+                stackList.OnListChanged -= OnListChanged;
+            }
+        }
+
+        private void OnListChanged()
+        {
+            Debug.Log("Refresh");
+            Refresh();
         }
 
         public void Refresh()

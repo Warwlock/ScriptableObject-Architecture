@@ -116,8 +116,8 @@ where TResponse : UnityEvent<TType>
         private Color _debugColor = Color.cyan;
 #pragma warning restore
 
-        public List<StackTraceEntry> StackTraces { get { return _stackTraces; } }
-        private List<StackTraceEntry> _stackTraces = new List<StackTraceEntry>();
+        public StackTraceList StackTraces { get { return _stackTraces; } }
+        private StackTraceList _stackTraces = new StackTraceList();
 
         protected abstract ScriptableObject GameEvent { get; }
         protected abstract UnityEventBase Response { get; }
