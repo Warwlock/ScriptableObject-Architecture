@@ -1,22 +1,20 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEditor;
+using UnityEngine.UIElements;
+using UnityEditor.UIElements;
 
 namespace ScriptableObjectArchitecture.Editor
 {
     [CustomPropertyDrawer(typeof(Vector4))]
     public class Vector4Drawer : PropertyDrawer
     {
-        private const float Height = 20;
+        public override VisualElement CreatePropertyGUI(SerializedProperty property)
+        {
+            Vector4Field vector4Field = new Vector4Field(property.displayName);
+            vector4Field.AddToClassList("unity-base-field__aligned");
+            vector4Field.BindProperty(property);
 
-        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
-        {
-            property.vector4Value = EditorGUI.Vector4Field(position, label, property.vector4Value);
-        }
-        public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
-        {
-            return Height;
+            return vector4Field;
         }
     }
 }

@@ -1,28 +1,31 @@
 ﻿using UnityEditor;
+using UnityEngine.UIElements;
 
 namespace ScriptableObjectArchitecture.Editor
 {
     public abstract class BaseGameEventEditor : UnityEditor.Editor
     {
         private IStackTraceObject Target { get { return (IStackTraceObject)target; } }
+        private StackTraceElement _stackTraceElement;
 
-        private StackTrace _stackTrace;
+        protected abstract void DrawRaiseButton(VisualElement root);
 
-        protected abstract void DrawRaiseButton();
-
-        protected virtual void OnEnable()
+        public override VisualElement CreateInspectorGUI()
         {
-            _stackTrace = new StackTrace(Target);
-            _stackTrace.OnRepaint.AddListener(Repaint);
-        }
-        public override void OnInspectorGUI()
-        {
-            DrawRaiseButton();
+            VisualElement root = new VisualElement();
+
+            DrawRaiseButton(root);
 
             if (!SOArchitecturePreferences.IsDebugEnabled)
-                EditorGUILayout.HelpBox("Debug mode disabled\nStack traces will not be filed on raise!", MessageType.Warning);
+            {
+                HelpBox helpBox = new HelpBox("Debug mode disabled\nStack traces will not be filed on raise!", HelpBoxMessageType.Warning);
+                root.Add(helpBox);
+            }
 
-            _stackTrace.Draw();
+            _stackTraceElement = new StackTraceElement(Target);
+            root.Add(_stackTraceElement);
+
+            return root;
         }
     }
 }

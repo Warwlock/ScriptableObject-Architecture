@@ -1,6 +1,8 @@
 ﻿using System.Reflection;
 using UnityEditor;
+using UnityEditor.UIElements;
 using UnityEngine;
+using UnityEngine.UIElements;
 using Type = System.Type;
 
 namespace ScriptableObjectArchitecture.Editor
@@ -10,22 +12,27 @@ namespace ScriptableObjectArchitecture.Editor
     {
         private MethodInfo _raiseMethod;
 
-        protected override void OnEnable()
+        protected void OnEnable()
         {
-            base.OnEnable();
-
             _raiseMethod = target.GetType().BaseType.GetMethod("OnEventRaised");
         }
-        protected override void DrawRaiseButton()
+        protected override void DrawRaiseButton(VisualElement root)
         {
             SerializedProperty property = serializedObject.FindProperty("_debugValue");
 
-            EditorGUILayout.PropertyField(property);
+            PropertyField debugValueField = new PropertyField(property);
+            root.Add(debugValueField);
 
-            if (GUILayout.Button("Raise"))
+            Button raiseButton = new Button(() =>
             {
                 CallMethod(GetDebugValue(property));
-            }
+            })
+            {
+                text = "Raise",
+                style = { marginBottom = 10, height = 25 }
+            };
+
+            root.Add(raiseButton);
         }
         private object GetDebugValue(SerializedProperty property)
         {
@@ -34,9 +41,10 @@ namespace ScriptableObjectArchitecture.Editor
 
             return targetField.GetValue(property.serializedObject.targetObject);
         }
+
         private void CallMethod(object value)
         {
-            _raiseMethod.Invoke(target, new object[1] { value });
+            _raiseMethod.Invoke(target, new object[] { value });
         }
     }
 }

@@ -1,68 +1,76 @@
-﻿using UnityEditor;
+﻿using System.Collections.Generic;
+using UnityEditor;
+using UnityEditor.UIElements;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace ScriptableObjectArchitecture.Editor
 {
     [CustomPropertyDrawer(typeof(BaseReference<,>), true)]
     public sealed class BaseReferenceDrawer : PropertyDrawer
     {
-        private static readonly string[] popupOptions =
-        {
-            "Use Constant",
-            "Use Variable"
-        };
-
         private SerializedProperty useConstant;
         private SerializedProperty constantValue;
         private SerializedProperty variable;
 
-        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+        public override VisualElement CreatePropertyGUI(SerializedProperty property)
         {
             useConstant = property.FindPropertyRelative("_useConstant");
             constantValue = property.FindPropertyRelative("_constantValue");
             variable = property.FindPropertyRelative("_variable");
-                        
-            label = EditorGUI.BeginProperty(position, label, property);
-            position = EditorGUI.PrefixLabel(position, label);
 
-            EditorGUI.BeginChangeCheck();
+            VisualElement root = new VisualElement();
+            root.AddToClassList("unity-base-field");
+            root.AddToClassList("unity-property-field");
 
-            // Calculate rect for configuration button
-            Rect buttonRect = new Rect(position);
-            buttonRect.yMin += Styles.PopupStyle.margin.top;
-            buttonRect.width = Styles.PopupStyle.fixedWidth + Styles.PopupStyle.margin.right;
-            position.xMin = buttonRect.xMax;
+            Label label = new Label(property.displayName);
+            label.AddToClassList("unity-base-field__label");
+            label.AddToClassList("unity-property-field__label");
+            root.Add(label);
 
-            // Store old indent level and set it to 0, the PrefixLabel takes care of it
-            int indent = EditorGUI.indentLevel;
-            EditorGUI.indentLevel = 0;
+            VisualElement inputContainer = new VisualElement();
+            inputContainer.AddToClassList("unity-base-field__input");
+            inputContainer.style.flexDirection = FlexDirection.Row; // Align children horizontally
+            root.Add(inputContainer);
 
-            int result = EditorGUI.Popup(buttonRect, useConstant.boolValue ? 0 : 1, popupOptions, Styles.PopupStyle);
+            List<string> choices = new List<string> { "Use Variable", "Use Constant" };
+            PopupField<string> popup = new PopupField<string>(choices, useConstant.boolValue ? 1 : 0);
+            popup.style.width = 110;
+            popup.style.flexShrink = 0;
+            popup.style.marginRight = 4;
 
-            useConstant.boolValue = result == 0;
-
-            EditorGUI.PropertyField(position, 
-                useConstant.boolValue ? constantValue : variable, 
-                GUIContent.none);
-
-            if (EditorGUI.EndChangeCheck())
-                property.serializedObject.ApplyModifiedProperties();
+            PropertyField constantField = new PropertyField(constantValue, string.Empty);
+            PropertyField variableField = new PropertyField(variable, string.Empty);
             
-            EditorGUI.indentLevel = indent;
-            EditorGUI.EndProperty();
-        }
-        
-        static class Styles
-        {
-            static Styles()
+            constantField.style.flexGrow = 1;
+            variableField.style.flexGrow = 1;
+
+            void UpdateVisibility(bool isConstant)
             {
-                PopupStyle = new GUIStyle(GUI.skin.GetStyle("PaneOptions"))
-                {
-                    imagePosition = ImagePosition.ImageOnly,
-                };
+                constantField.style.display = isConstant ? DisplayStyle.Flex : DisplayStyle.None;
+                variableField.style.display = isConstant ? DisplayStyle.None : DisplayStyle.Flex;
             }
 
-            public static GUIStyle PopupStyle { get; set; }
+            popup.RegisterValueChangedCallback(evt =>
+            {
+                bool isConstant = evt.newValue == choices[1];
+                useConstant.boolValue = isConstant;
+                property.serializedObject.ApplyModifiedProperties();
+            });
+
+            root.TrackPropertyValue(useConstant, prop =>
+            {
+                popup.value = prop.boolValue ? choices[1] : choices[0];
+                UpdateVisibility(prop.boolValue);
+            });
+
+            UpdateVisibility(useConstant.boolValue);
+
+            inputContainer.Add(popup);
+            inputContainer.Add(constantField);
+            inputContainer.Add(variableField);
+
+            return root;
         }
     }
 }

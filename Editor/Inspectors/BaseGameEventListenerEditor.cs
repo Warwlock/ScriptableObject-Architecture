@@ -1,73 +1,85 @@
 ﻿using UnityEditor;
+using UnityEditor.UIElements;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace ScriptableObjectArchitecture.Editor
 {
     public abstract class BaseGameEventListenerEditor : UnityEditor.Editor
     {
         private IStackTraceObject Target { get { return (IStackTraceObject)target; } }
+        private StackTraceElement _stackTraceElement;
 
-        private StackTrace _stackTrace;
-        private SerializedProperty _event;
-        private SerializedProperty _debugColor;
-        private SerializedProperty _response;
-        private SerializedProperty _enableDebug;
-        private SerializedProperty _showDebugFields;
+        protected abstract void DrawRaiseButton(VisualElement container);
 
-        protected abstract void DrawRaiseButton();
-
-        protected virtual void OnEnable()
+        public override VisualElement CreateInspectorGUI()
         {
-            _stackTrace = new StackTrace(Target, true);
-            _stackTrace.OnRepaint.AddListener(Repaint);
+            VisualElement root = new VisualElement();
 
-            _event = serializedObject.FindProperty("_event");
-            _debugColor = serializedObject.FindProperty("_debugColor");
-            _response = serializedObject.FindProperty("_response");
-            _enableDebug = serializedObject.FindProperty("_enableGizmoDebugging");
-            _showDebugFields = serializedObject.FindProperty("_showDebugFields");
-        }
-        public override void OnInspectorGUI()
-        {
-            EditorGUILayout.ObjectField(_event, new GUIContent("Event", "Event which will trigger the response"));
-            EditorGUILayout.PropertyField(_response, new GUIContent("Response"));
+            // Find properties
+            SerializedProperty eventProp = serializedObject.FindProperty("_event");
+            SerializedProperty responseProp = serializedObject.FindProperty("_response");
+            SerializedProperty showDebugFieldsProp = serializedObject.FindProperty("_showDebugFields");
+            SerializedProperty enableDebugProp = serializedObject.FindProperty("_enableGizmoDebugging");
+            SerializedProperty debugColorProp = serializedObject.FindProperty("_debugColor");
 
-            _showDebugFields.boolValue = EditorGUILayout.Foldout(_showDebugFields.boolValue, new GUIContent("Show Debug Fields"));
-            if (_showDebugFields.boolValue)
+            // Fields
+            PropertyField eventField = new PropertyField(eventProp, "Event")
             {
-                DrawDebugging();
-            }
+                tooltip = "Event which will trigger the response"
+            };
+            root.Add(eventField);
 
-            serializedObject.ApplyModifiedProperties();
-        }
-        private void DrawDebugging()
-        {
-            EditorGUILayout.LabelField("Callback Debugging", EditorStyles.boldLabel);
-            using (new EditorGUI.IndentLevelScope())
+            root.Add(new PropertyField(responseProp, "Response"));
+
+            // Debugging
+            Foldout debugFoldout = new Foldout { text = "Show Debug Fields" };
+            debugFoldout.BindProperty(showDebugFieldsProp); // Automatically syncs open/close state with the property
+            root.Add(debugFoldout);
+
+            // Callback Debug Section
+            Label callbackLabel = new Label("Callback Debugging");
+            callbackLabel.style.unityFontStyleAndWeight = FontStyle.Bold;
+            callbackLabel.style.marginTop = 10;
+            callbackLabel.style.marginBottom = 5;
+            debugFoldout.Add(callbackLabel);
+
+            VisualElement callbackIndent = new VisualElement();
+            callbackIndent.style.marginLeft = 15;
+            debugFoldout.Add(callbackIndent);
+
+            DrawRaiseButton(callbackIndent);
+
+            _stackTraceElement = new StackTraceElement(Target, startCollapsed: true);
+            callbackIndent.Add(_stackTraceElement);
+
+            // Gizmo Debugging
+            Label gizmoLabel = new Label("Gizmo Debugging");
+            gizmoLabel.style.unityFontStyleAndWeight = FontStyle.Bold;
+            gizmoLabel.style.marginTop = 20;
+            gizmoLabel.style.marginBottom = 5;
+            debugFoldout.Add(gizmoLabel);
+
+            VisualElement gizmoIndent = new VisualElement();
+            gizmoIndent.style.marginLeft = 15;
+            debugFoldout.Add(gizmoIndent);
+
+            PropertyField enableDebugField = new PropertyField(enableDebugProp, "Enable Gizmo Debugging");
+            gizmoIndent.Add(enableDebugField);
+
+            PropertyField debugColorField = new PropertyField(debugColorProp, "Debug Color")
             {
-                DrawRaiseButton();
-
-                _stackTrace.Draw();
-            }
-
-
-            EditorGUILayout.Space();
-            EditorGUILayout.Space();
-
-
-            EditorGUILayout.LabelField("Gizmo Debugging", EditorStyles.boldLabel);
-            using (new EditorGUI.IndentLevelScope())
+                tooltip = "Color used to draw debug gizmos in the scene"
+            };
+            gizmoIndent.Add(debugColorField);
+            
+            debugColorField.SetEnabled(enableDebugProp.boolValue);
+            debugColorField.TrackPropertyValue(enableDebugProp, prop => 
             {
-                EditorGUILayout.PropertyField(_enableDebug, new GUIContent("Enable Gizmo Debugging"));
+                debugColorField.SetEnabled(prop.boolValue); 
+            });
 
-                using (new EditorGUI.DisabledGroupScope(_enableDebug.boolValue))
-                {
-                    EditorGUILayout.PropertyField(_debugColor, new GUIContent("Debug Color", "Color used to draw debug gizmos in the scene"));
-                }
-            }
-
-
-            EditorGUILayout.Space();
+            return root;
         }
     } 
 }

@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using UnityEditor;
 using UnityEditor.AnimatedValues;
+using UnityEngine.UIElements;
+using UnityEditor.UIElements;
 
 namespace ScriptableObjectArchitecture.Editor
 {
@@ -8,123 +10,119 @@ namespace ScriptableObjectArchitecture.Editor
     public class BaseVariableEditor : UnityEditor.Editor
     {
         private dynamic Target { get { return target; } }
-        protected bool IsClampable { get { return Target.Clampable; } }
-        
-        private SerializedProperty _valueProperty;
-        private SerializedProperty _readOnly;
-        private SerializedProperty _raiseWarning;
-        private SerializedProperty _isClamped;
-        private SerializedProperty _minValueProperty;
-        private SerializedProperty _maxValueProperty;
-        private SerializedProperty _defaultValueProperty;
-        private SerializedProperty _useDefaultProperty;
-
-        private AnimBool _useDefaultValueAnimation;
-        private AnimBool _raiseWarningAnimation;
-        private AnimBool _isClampedVariableAnimation;
+        protected bool IsClampable
+        {
+            get
+            {
+                // Safety Check
+                try { return Target.Clampable; }
+                catch { return false; }
+            }
+        }
 
         private const string READONLY_TOOLTIP = "Should this value be changable during runtime? Will still be editable in the inspector regardless";
 
-        protected virtual void OnEnable()
+        public override VisualElement CreateInspectorGUI()
         {
-            _valueProperty = serializedObject.FindProperty("_value");
-            _readOnly = serializedObject.FindProperty("_readOnly");
-            _raiseWarning = serializedObject.FindProperty("_raiseWarning");
-            _isClamped = serializedObject.FindProperty("_isClamped");
-            _minValueProperty = serializedObject.FindProperty("_minClampedValue");
-            _maxValueProperty = serializedObject.FindProperty("_maxClampedValue");
-            _defaultValueProperty = serializedObject.FindProperty("_defaultValue");
-            _useDefaultProperty = serializedObject.FindProperty("_useDefaultValue");
+            VisualElement root = new VisualElement();
 
-            _useDefaultValueAnimation = new AnimBool(_useDefaultProperty.boolValue);
-            _useDefaultValueAnimation.valueChanged.AddListener(Repaint);
+            SerializedProperty valueProp = serializedObject.FindProperty("_value");
+            SerializedProperty useDefaultProp = serializedObject.FindProperty("_useDefaultValue");
+            SerializedProperty defaultValProp = serializedObject.FindProperty("_defaultValue");
 
-            _raiseWarningAnimation = new AnimBool(_readOnly.boolValue);
-            _raiseWarningAnimation.valueChanged.AddListener(Repaint);
+            SerializedProperty isClampedProp = serializedObject.FindProperty("_isClamped");
+            SerializedProperty minValProp = serializedObject.FindProperty("_minClampedValue");
+            SerializedProperty maxValProp = serializedObject.FindProperty("_maxClampedValue");
 
-            _isClampedVariableAnimation = new AnimBool(_isClamped.boolValue);
-            _isClampedVariableAnimation.valueChanged.AddListener(Repaint);
-        }
-        public override void OnInspectorGUI()
-        {
-            serializedObject.Update();
+            SerializedProperty readOnlyProp = serializedObject.FindProperty("_readOnly");
+            SerializedProperty raiseWarningProp = serializedObject.FindProperty("_raiseWarning");
 
-            DrawValue();
+            root.Add(new PropertyField(valueProp));
 
-            EditorGUILayout.Space();
+            // Default Field and Container
+            PropertyField useDefaultField = new PropertyField(useDefaultProp);
+            root.Add(useDefaultField);
 
-            DrawClampedFields();
-            DrawReadonlyField();
-        }
-        protected virtual void DrawValue()
-        {
-            EditorGUILayout.PropertyField(_valueProperty);
+            VisualElement defaultContainer = new VisualElement();
+            defaultContainer.style.marginLeft = 15;
+            defaultContainer.style.display = useDefaultProp.boolValue ? DisplayStyle.Flex : DisplayStyle.None;
+            defaultContainer.Add(new PropertyField(defaultValProp));
+            root.Add(defaultContainer);
 
-            EditorGUILayout.PropertyField(_useDefaultProperty);
-            _useDefaultValueAnimation.target = _useDefaultProperty.boolValue;
-            using (var anim = new EditorGUILayout.FadeGroupScope(_useDefaultValueAnimation.faded))
+            // Toggle Visibility
+            useDefaultField.TrackPropertyValue(useDefaultProp, prop => 
             {
-                if (anim.visible)
-                {
-                    using (new EditorGUI.IndentLevelScope())
-                    {
-                        EditorGUILayout.PropertyField(_defaultValueProperty);
-                    }
-                }
-            }
-        }
-        protected void DrawClampedFields()
-        {
-            if (!IsClampable)
-                return;
+                defaultContainer.style.display = prop.boolValue ? DisplayStyle.Flex : DisplayStyle.None;
+            });
 
-            EditorGUILayout.PropertyField(_isClamped);
-            _isClampedVariableAnimation.target = _isClamped.boolValue;
+            root.Add(new VisualElement { style = { height = 15 } });
 
-            using (var anim = new EditorGUILayout.FadeGroupScope(_isClampedVariableAnimation.faded))
+            // Read-Only Container
+            VisualElement readOnlySection = new VisualElement();
+
+            PropertyField readOnlyField = new PropertyField(readOnlyProp, "Read Only")
             {
-                if (anim.visible)
-                {
-                    using (new EditorGUI.IndentLevelScope())
-                    {
-                        EditorGUILayout.PropertyField(_minValueProperty);
-                        EditorGUILayout.PropertyField(_maxValueProperty);
-                    }
-                }
-            }
+                tooltip = READONLY_TOOLTIP
+            };
+            readOnlySection.Add(readOnlyField);
 
-        }
-        protected void DrawReadonlyField()
-        {
-            if (_isClamped.boolValue)
-                return;
+            VisualElement raiseWarningContainer = new VisualElement();
+            raiseWarningContainer.style.marginLeft = 15;
+            raiseWarningContainer.style.display = readOnlyProp.boolValue ? DisplayStyle.Flex : DisplayStyle.None;
+            raiseWarningContainer.Add(new PropertyField(raiseWarningProp));
+            readOnlySection.Add(raiseWarningContainer);
 
-            EditorGUILayout.PropertyField(_readOnly, new GUIContent("Read Only", READONLY_TOOLTIP));
-
-            _raiseWarningAnimation.target = _readOnly.boolValue;
-            using (var fadeGroup = new EditorGUILayout.FadeGroupScope(_raiseWarningAnimation.faded))
+            // Show warning when read-only true
+            readOnlyField.TrackPropertyValue(readOnlyProp, prop => 
             {
-                if (fadeGroup.visible)
+                raiseWarningContainer.style.display = prop.boolValue ? DisplayStyle.Flex : DisplayStyle.None;
+            });
+
+            if (IsClampable)
+            {
+                VisualElement clampSection = new VisualElement();
+
+                PropertyField isClampedField = new PropertyField(isClampedProp);
+                clampSection.Add(isClampedField);
+
+                VisualElement minMaxContainer = new VisualElement();
+                minMaxContainer.style.marginLeft = 15;
+                minMaxContainer.style.display = isClampedProp.boolValue ? DisplayStyle.Flex : DisplayStyle.None;
+                
+                minMaxContainer.Add(new PropertyField(minValProp));
+                minMaxContainer.Add(new PropertyField(maxValProp));
+                clampSection.Add(minMaxContainer);
+
+                readOnlySection.style.display = isClampedProp.boolValue ? DisplayStyle.None : DisplayStyle.Flex;
+
+                // Disable read-only, enable min-max
+                isClampedField.TrackPropertyValue(isClampedProp, prop => 
                 {
-                    EditorGUI.indentLevel++;
-                    EditorGUILayout.PropertyField(_raiseWarning);
-                    EditorGUI.indentLevel--;
-                }
+                    minMaxContainer.style.display = prop.boolValue ? DisplayStyle.Flex : DisplayStyle.None;
+                    readOnlySection.style.display = prop.boolValue ? DisplayStyle.None : DisplayStyle.Flex;
+                });
+
+                root.Add(clampSection);
             }
+
+            root.Add(readOnlySection);
+
+            return root;
         }
     }
     [CustomEditor(typeof(BaseVariable<,>), true)]
     public class BaseVariableWithEventEditor : BaseVariableEditor
     {
-        public override void OnInspectorGUI()
+        public override VisualElement CreateInspectorGUI()
         {
-            base.OnInspectorGUI();
+            VisualElement root = base.CreateInspectorGUI();
 
-            EditorGUILayout.Space();
+            root.Add(new VisualElement { style = { height = 15 } });
 
-            EditorGUILayout.PropertyField(serializedObject.FindProperty("_event"));
+            SerializedProperty eventProp = serializedObject.FindProperty("_event");
+            root.Add(new PropertyField(eventProp));
 
-            serializedObject.ApplyModifiedProperties();
+            return root;
         }
     }
 }

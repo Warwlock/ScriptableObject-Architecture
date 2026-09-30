@@ -1,5 +1,7 @@
 ﻿using UnityEditor;
+using UnityEditor.UIElements;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace ScriptableObjectArchitecture.Editor
 {
@@ -10,67 +12,73 @@ namespace ScriptableObjectArchitecture.Editor
         private const string SCENE_NAME_PROPERTY = "_sceneName";
         private const string SCENE_INDEX_PROPERTY = "_sceneIndex";
         private const string SCENE_ENABLED_PROPERTY = "_isSceneEnabled";
-        private const int FIELD_COUNT = 5;
 
-        public override void OnGUI(Rect propertyRect, SerializedProperty property, GUIContent label)
+        public override VisualElement CreatePropertyGUI(SerializedProperty property)
         {
-            var sceneNameProperty = property.FindPropertyRelative(SCENE_NAME_PROPERTY);
-            var sceneIndexProperty = property.FindPropertyRelative(SCENE_INDEX_PROPERTY);
-            var enabledProperty = property.FindPropertyRelative(SCENE_ENABLED_PROPERTY);
+            VisualElement root = new VisualElement();
 
-            EditorGUI.BeginProperty(propertyRect, new GUIContent(property.displayName), property);
-            EditorGUI.BeginChangeCheck();
+            SerializedProperty sceneNameProperty = property.FindPropertyRelative(SCENE_NAME_PROPERTY);
+            SerializedProperty sceneIndexProperty = property.FindPropertyRelative(SCENE_INDEX_PROPERTY);
+            SerializedProperty enabledProperty = property.FindPropertyRelative(SCENE_ENABLED_PROPERTY);
 
-            // Draw Object Selector for SceneAssets
-            var sceneAssetRect = new Rect
+            // Scene Object Field
+            ObjectField sceneAssetField = new ObjectField(property.displayName)
             {
-                position = propertyRect.position,
-                size = new Vector2(propertyRect.width, EditorGUIUtility.singleLineHeight)
+                objectType = typeof(SceneAsset),
+                allowSceneObjects = false
             };
 
-            var oldSceneAsset = AssetDatabase.LoadAssetAtPath<SceneAsset>(sceneNameProperty.stringValue);
-            var sceneAsset = EditorGUI.ObjectField(sceneAssetRect, oldSceneAsset, typeof(SceneAsset), false);
-            var sceneAssetPath = AssetDatabase.GetAssetPath(sceneAsset);
-            if (sceneNameProperty.stringValue != sceneAssetPath)
+            if (!string.IsNullOrEmpty(sceneNameProperty.stringValue))
             {
-                sceneNameProperty.stringValue = sceneAssetPath;
+                sceneAssetField.SetValueWithoutNotify(AssetDatabase.LoadAssetAtPath<SceneAsset>(sceneNameProperty.stringValue));
             }
 
-            if (string.IsNullOrEmpty(sceneNameProperty.stringValue))
+            sceneAssetField.RegisterValueChangedCallback(evt =>
             {
-                sceneIndexProperty.intValue = -1;
-                enabledProperty.boolValue = false;
-            }
+                SceneAsset newAsset = evt.newValue as SceneAsset;
+                string newPath = AssetDatabase.GetAssetPath(newAsset);
 
-            // Draw preview fields for scene information.
-            var titleLabelRect = sceneAssetRect;
-            titleLabelRect.y += EditorGUIUtility.singleLineHeight;
+                sceneNameProperty.stringValue = newPath;
 
-            EditorGUI.LabelField(titleLabelRect, SCENE_PREVIEW_TITLE);
-            EditorGUI.BeginDisabledGroup(true);
-            var nameRect = titleLabelRect;
-            nameRect.y += EditorGUIUtility.singleLineHeight;
+                if (string.IsNullOrEmpty(newPath))
+                {
+                    sceneIndexProperty.intValue = -1;
+                    enabledProperty.boolValue = false;
+                }
 
-            var indexRect = nameRect;
-            indexRect.y += EditorGUIUtility.singleLineHeight;
-
-            var enabledRect = indexRect;
-            enabledRect.y += EditorGUIUtility.singleLineHeight;
-
-            EditorGUI.PropertyField(nameRect, sceneNameProperty);
-            EditorGUI.PropertyField(indexRect, sceneIndexProperty);
-            EditorGUI.PropertyField(enabledRect, enabledProperty);
-            EditorGUI.EndDisabledGroup();
-            if (EditorGUI.EndChangeCheck())
-            {
                 property.serializedObject.ApplyModifiedProperties();
-            }
-            EditorGUI.EndProperty();
-        }
+            });
 
-        public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
-        {
-            return EditorGUIUtility.singleLineHeight * FIELD_COUNT + ((FIELD_COUNT - 1) * EditorGUIUtility.standardVerticalSpacing);
+            sceneAssetField.TrackPropertyValue(sceneNameProperty, prop =>
+            {
+                string currentPath = AssetDatabase.GetAssetPath(sceneAssetField.value);
+                if (currentPath != prop.stringValue)
+                {
+                    sceneAssetField.SetValueWithoutNotify(AssetDatabase.LoadAssetAtPath<SceneAsset>(prop.stringValue));
+                }
+            });
+
+            root.Add(sceneAssetField);
+
+            // Read-Only Preview Section
+            Label previewLabel = new Label(SCENE_PREVIEW_TITLE)
+            {
+                style =
+                {
+                    unityFontStyleAndWeight = FontStyle.Bold
+                }
+            };
+            root.Add(previewLabel);
+
+            VisualElement previewContainer = new VisualElement();
+            previewContainer.SetEnabled(false);
+            previewContainer.Add(new PropertyField(sceneNameProperty));
+            previewContainer.Add(new PropertyField(sceneIndexProperty));
+            previewContainer.Add(new PropertyField(enabledProperty));
+
+            root.Add(previewContainer);
+
+            return root;
         }
     }
 }

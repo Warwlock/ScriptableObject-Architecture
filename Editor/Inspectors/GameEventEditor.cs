@@ -1,5 +1,6 @@
 ﻿using UnityEditor;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace ScriptableObjectArchitecture.Editor
 {
@@ -8,12 +9,15 @@ namespace ScriptableObjectArchitecture.Editor
     {
         private GameEvent Target { get { return (GameEvent)target; } }
 
-        protected override void DrawRaiseButton()
+        protected override void DrawRaiseButton(VisualElement root)
         {
-            if (GUILayout.Button("Raise"))
+            Button raiseButton = new Button(() => Target.Raise())
             {
-                Target.Raise();
-            }
+                text = "Raise",
+                style = { marginBottom = 10, height = 25 }
+            };
+
+            root.Add(raiseButton);
         }
     } 
 }

@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using UnityEngine;
 using UnityEditor;
+using UnityEngine.UIElements;
 
 namespace ScriptableObjectArchitecture.Editor
 {
@@ -9,18 +10,22 @@ namespace ScriptableObjectArchitecture.Editor
     {
         private MethodInfo _raiseMethod;
 
-        protected override void OnEnable()
+        protected void OnEnable()
         {
-            base.OnEnable();
-
             _raiseMethod = target.GetType().BaseType.GetMethod("OnEventRaised");
         }
-        protected override void DrawRaiseButton()
+        protected override void DrawRaiseButton(VisualElement container)
         {
-            if (GUILayout.Button("Raise"))
+            Button raiseButton = new Button(() => 
             {
-                _raiseMethod.Invoke(target, null);
-            }
+                _raiseMethod?.Invoke(target, null);
+            })
+            {
+                text = "Raise",
+                style = { marginBottom = 10, height = 25 }
+            };
+
+            container.Add(raiseButton);
         }
     } 
 }
