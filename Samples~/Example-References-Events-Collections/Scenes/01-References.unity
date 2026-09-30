@@ -519,10 +519,6 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 114212140993495922, guid: 3768c23610dfe9140af281dcf25e1b38, type: 3}
-      propertyPath: Health._variable
-      value: 
-      objectReference: {fileID: 11400000, guid: 00040033833585f4b940c1e6c8d5d2e1, type: 2}
-    - target: {fileID: 114212140993495922, guid: 3768c23610dfe9140af281dcf25e1b38, type: 3}
       propertyPath: PlayerHealth._variable
       value: 
       objectReference: {fileID: 11400000, guid: 00040033833585f4b940c1e6c8d5d2e1, type: 2}
@@ -579,14 +575,6 @@ PrefabInstance:
     - target: {fileID: 4839017886741306, guid: 4af3f7bae9508154aa309138a5831b06, type: 3}
       propertyPath: m_LocalRotation.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 114838005575915090, guid: 4af3f7bae9508154aa309138a5831b06, type: 3}
-      propertyPath: _damageAmount._useConstant
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 135838003564223064, guid: 4af3f7bae9508154aa309138a5831b06, type: 3}
-      propertyPath: m_IsTrigger
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
