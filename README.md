@@ -20,6 +20,7 @@
 # Known Problems / Limitations
 
 - There is Custom Vector4 Property Drawer. It can affect all of the scripts in the project. But it makes the field nice and more useful.
+- Using SceneReference with "UseConstant" inside inspector causes problems. No problem with "UseVariable". I didn't bother to fix it for now.
 
 # Installation
 
