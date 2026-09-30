@@ -97,7 +97,6 @@ namespace ScriptableObjectArchitecture.Editor
 
         private void OnAttachToPanel(AttachToPanelEvent evt)
         {
-            Debug.Log("Sub");
             if (_target?.StackTraces is StackTraceList stackList)
             {
                 stackList.OnListChanged += OnListChanged;
@@ -106,7 +105,6 @@ namespace ScriptableObjectArchitecture.Editor
 
         private void OnDetachFromPanel(DetachFromPanelEvent evt)
         {
-            Debug.Log("UnSub");
             if (_target?.StackTraces is StackTraceList stackList)
             {
                 stackList.OnListChanged -= OnListChanged;
@@ -115,7 +113,6 @@ namespace ScriptableObjectArchitecture.Editor
 
         private void OnListChanged()
         {
-            Debug.Log("Refresh");
             Refresh();
         }
 
