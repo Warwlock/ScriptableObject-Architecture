@@ -109,8 +109,6 @@ where TResponse : UnityEvent<TType>
     {
 #pragma warning disable 0414
         [SerializeField]
-        private bool _showDebugFields = false;
-        [SerializeField]
         private bool _enableGizmoDebugging = true;
         [SerializeField]
         private Color _debugColor = Color.cyan;

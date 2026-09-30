@@ -19,7 +19,6 @@ namespace ScriptableObjectArchitecture.Editor
             // Find properties
             SerializedProperty eventProp = serializedObject.FindProperty("_event");
             SerializedProperty responseProp = serializedObject.FindProperty("_response");
-            SerializedProperty showDebugFieldsProp = serializedObject.FindProperty("_showDebugFields");
             SerializedProperty enableDebugProp = serializedObject.FindProperty("_enableGizmoDebugging");
             SerializedProperty debugColorProp = serializedObject.FindProperty("_debugColor");
 
@@ -33,8 +32,11 @@ namespace ScriptableObjectArchitecture.Editor
             root.Add(new PropertyField(responseProp, "Response"));
 
             // Debugging
-            Foldout debugFoldout = new Foldout { text = "Show Debug Fields" };
-            debugFoldout.BindProperty(showDebugFieldsProp); // Automatically syncs open/close state with the property
+            Foldout debugFoldout = new Foldout
+            {
+                text = "Show Debug Fields",
+                value = false
+            };
             root.Add(debugFoldout);
 
             // Callback Debug Section
