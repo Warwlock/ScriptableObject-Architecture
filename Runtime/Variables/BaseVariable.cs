@@ -7,14 +7,8 @@ namespace ScriptableObjectArchitecture
     {
         public virtual T Value
         {
-            get
-            {
-                return _value;
-            }
-            set
-            {
-                _value = SetValue(value);
-            }
+            get => _value;
+            set => _value = SetValue(value);
         }
 
         public T DefaultValue
@@ -23,53 +17,20 @@ namespace ScriptableObjectArchitecture
             set => _defaultValue = value;
         }
 
-        public virtual T MinClampValue
-        {
-            get
-            {
-                if(Clampable)
-                {
-                    return _minClampedValue;
-                }
-                else
-                {
-                    return default(T);
-                }
-            }
-        }
+        public virtual T MinClampValue => Clampable ? _minClampedValue : default;
+        public virtual T MaxClampValue => Clampable ? _maxClampedValue : default;
 
-        public virtual T MaxClampValue
-        {
-            get
-            {
-                if(Clampable)
-                {
-                    return _maxClampedValue;
-                }
-                else
-                {
-                    return default(T);
-                }
-            }
-        }
-
-        public virtual bool Clampable { get { return false; } }
-        public virtual bool ReadOnly { get { return _readOnly; } }
-        public virtual bool IsClamped { get { return _isClamped; } }
-        public virtual System.Type Type { get { return typeof(T); } }
+        public virtual bool Clampable => false;
+        public virtual bool ReadOnly => _readOnly;
+        public virtual bool IsClamped => _isClamped;
+        public virtual System.Type Type => typeof(T);
         public virtual System.Type ReferenceType => typeof(BaseReference<T, BaseVariable<T>>);
         public virtual bool UseDefaultValue => _useDefaultValue;
 
         public object BaseValue
         {
-            get
-            {
-                return _value;
-            }
-            set
-            {
-                SetValue((T)value);
-            }
+            get => _value;
+            set => SetValue((T)value);
         }
 
         [SerializeField]
@@ -88,13 +49,11 @@ namespace ScriptableObjectArchitecture
         protected T _maxClampedValue = default;
         [SerializeField]
         protected T _defaultValue;
-        
+
         private T _oldValue;
 
-        public virtual T SetValue(BaseVariable<T> value)
-        {
-            return SetValue(value.Value);
-        }
+        public virtual T SetValue(BaseVariable<T> value) => SetValue(value.Value);
+
         public virtual T SetValue(T newValue)
         {
             if (_readOnly)
@@ -102,7 +61,7 @@ namespace ScriptableObjectArchitecture
                 RaiseReadonlyWarning();
                 return _value;
             }
-            else if(Clampable && IsClamped)
+            else if (Clampable && IsClamped)
             {
                 newValue = ClampValue(newValue);
             }
@@ -116,16 +75,11 @@ namespace ScriptableObjectArchitecture
 
             return newValue;
         }
-        protected virtual bool AreValuesEqual(T a, T b)
-        {
-            if (a != null) return a.Equals(b);
 
-            return b == null;
-        }
-        protected virtual T ClampValue(T value)
-        {
-            return value;
-        }
+        protected virtual bool AreValuesEqual(T a, T b) => a != null ? a.Equals(b) : b == null;
+
+        protected virtual T ClampValue(T value) => value;
+
         private void RaiseReadonlyWarning()
         {
             if (!_readOnly || !_raiseWarning)
@@ -133,35 +87,26 @@ namespace ScriptableObjectArchitecture
 
             Debug.LogWarning("Tried to set value on " + name + ", but value is readonly!", this);
         }
-        public override string ToString()
-        {
-            return _value == null ? "null" : _value.ToString();
-        }
-        public static implicit operator T(BaseVariable<T> variable)
-        {
-            return variable.Value;
-        }
-        public void OnValidate()
-        {
-            SetValue(Value);
-        }
+        public override string ToString() => _value == null ? "null" : _value.ToString();
+
+        public static implicit operator T(BaseVariable<T> reference) => reference.Value;
+
+        public void OnValidate() => SetValue(Value);
+
         public void OnEnable()
         {
             _oldValue = _value;
 
-            if(UseDefaultValue)
+            if (UseDefaultValue)
                 ResetToDefaultValue();
         }
 
-        private void ResetToDefaultValue()
-        {
-            Value = _defaultValue;
-        }
+        private void ResetToDefaultValue() => Value = _defaultValue;
     }
     public abstract class BaseVariable<T, TEvent> : BaseVariable<T> where TEvent : UnityEvent<T>
     {
         [SerializeField]
-        private TEvent _event = default(TEvent);
+        private TEvent _event = default;
 
         public override void Raise()
         {
@@ -169,14 +114,11 @@ namespace ScriptableObjectArchitecture
 
             _event.Invoke(Value);
         }
-        public void AddListener(UnityAction<T> callback)
-        {
-            _event.AddListener(callback);
-        }
-        public void RemoveListener(UnityAction<T> callback)
-        {
-            _event.RemoveListener(callback);
-        }
+
+        public void AddListener(UnityAction<T> callback) => _event.AddListener(callback);
+
+        public void RemoveListener(UnityAction<T> callback) => _event.RemoveListener(callback);
+
         public override void RemoveAll()
         {
             base.RemoveAll();
