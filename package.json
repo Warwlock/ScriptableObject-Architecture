@@ -4,7 +4,7 @@
   "version": "1.7.0",
   "unity": "6000.3",
   "description": "Makes using Scriptable Objects as a fundamental part of your architecture in Unity super easy.",
-  "documentationUrl": "",
+  "documentationUrl": "https://github.com/Warwlock/ScriptableObject-Architecture/wiki",
   "license": "MIT",
   "licensesUrl": "https://github.com/Warwlock/ScriptableObject-Architecture/blob/main/LICENSE.md",
   "changelogUrl": "https://github.com/Warwlock/ScriptableObject-Architecture/blob/main/CHANGELOG.md",

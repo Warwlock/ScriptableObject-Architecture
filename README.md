@@ -6,7 +6,7 @@
 
 * Based on Ryan Hipple's 2017 Unite talk https://www.youtube.com/watch?v=raQ3iHhE_Kk
 
-* Reading the [Wiki Page](https://github.com/DanielEverland/ScriptableObject-Architecture/wiki) is recommended!
+* Reading the [Wiki Page](https://github.com/Warwlock/ScriptableObject-Architecture/wiki) is recommended!
 
 # Features
 - Automatic Script Generation
@@ -16,6 +16,8 @@
 - Typed Events
 - Runtime Sets
 - Custom Icons
+- Optimised Event Stack Tracing
+- UI Toolkit is used for Editor UI
 
 # Known Problems / Limitations
 
