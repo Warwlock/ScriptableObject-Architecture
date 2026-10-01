@@ -24,7 +24,6 @@
 # Known Problems / Limitations
 
 - You can't use it with [Naught Attributes](https://github.com/dbrizov/NaughtyAttributes) or similar packages that are using IMGUI! Use [Saints Field](https://github.com/TylerTemp/SaintsField/) or similar packages that are using UIToolkit.
-- There is Custom Vector4 Property Drawer. It can affect all of the scripts in the project. But it makes the field nice and more useful.
 - Using SceneReference with "UseConstant" inside inspector causes problems. No problem with "UseVariable". I didn't bother to fix it for now.
 
 # Installation
