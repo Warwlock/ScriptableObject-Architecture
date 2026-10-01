@@ -8,6 +8,8 @@
 
 * Reading the [Wiki Page](https://github.com/Warwlock/ScriptableObject-Architecture/wiki) is recommended!
 
+**IMPORTANT:** UI Toolkit is more performant and I want performance when I am using Editor. That's why I completely ditched the IMGUI part of this package. I could have kept it for backwards compability but it makes the editor code very messy. If you use any IMGUI based Editor Tool, then they will not work.
+
 # Features
 - Automatic Script Generation
 - Variables - All C# primitives
@@ -21,6 +23,7 @@
 
 # Known Problems / Limitations
 
+- You can't use it with [Naught Attributes](https://github.com/dbrizov/NaughtyAttributes) or similar packages that are using IMGUI! Use [Saints Field](https://github.com/TylerTemp/SaintsField/) or similar packages that are using UIToolkit.
 - There is Custom Vector4 Property Drawer. It can affect all of the scripts in the project. But it makes the field nice and more useful.
 - Using SceneReference with "UseConstant" inside inspector causes problems. No problem with "UseVariable". I didn't bother to fix it for now.
 
